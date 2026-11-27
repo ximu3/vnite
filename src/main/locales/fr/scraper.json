@@ -1,8 +1,9 @@
 {
   "dlsite": {
+    "locale": "fr_FR",
     "workType": "Format du produit",
     "releaseDate": "Date de sortie",
-    "series": "Nom de série",
+    "series": "Série",
     "maker": "Marque"
   },
   "steam": {

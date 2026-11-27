@@ -6,6 +6,7 @@
     "unknown": "未知錯誤。"
   },
   "dlsite": {
+    "locale": "zh_TW",
     "workType": "作品形式",
     "releaseDate": "販賣日",
     "series": "系列名",

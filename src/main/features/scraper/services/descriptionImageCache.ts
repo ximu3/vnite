@@ -28,26 +28,33 @@ function extractDescriptionMediaUrls($: cheerio.CheerioAPI): Set<string> {
 }
 
 /**
- * Replace description URLs with cached attachment URLs for successfully cached images
+ * Use cached attachments in the description and replace cached pictures with their img element.
  * @param $ - parsed HTML description fragment
- * @param gameId - game ID for constructing attachment URL
- * @param cachedUrlHashes - mapping of successfully cached URLs to their hashes
- * @returns description with replaced URLs
+ * @param attachmentPrefix - URL prefix for this game's description attachments
+ * @param cachedUrlHashes - mapping of available cached media URLs to their hashes
+ * @returns description with cached attachment URLs
  */
 function replaceDescriptionMediaUrls(
   $: cheerio.CheerioAPI,
-  gameId: string,
+  attachmentPrefix: string,
   cachedUrlHashes: Map<string, string>
 ): string {
   for (const [tagName, attribute] of Object.entries(DESCRIPTION_MEDIA_ATTRIBUTES)) {
     $(`${tagName}[${attribute}]`).each((_, element) => {
-      const originalUrl = $(element).attr(attribute)
+      const media = $(element)
+      const originalUrl = media.attr(attribute)
       if (!originalUrl) return
 
       const hash = cachedUrlHashes.get(originalUrl)
       if (!hash) return
 
-      $(element).attr(attribute, `attachment://game/${gameId}/images/description/${hash}.webp`)
+      media.attr(attribute, `${attachmentPrefix}${hash}.webp`)
+
+      const picture = tagName === 'img' ? media.parent('picture') : null
+      if (picture?.length) {
+        media.removeAttr('srcset').removeAttr('sizes')
+        picture.replaceWith(media)
+      }
     })
   }
 
@@ -125,7 +132,7 @@ export async function cacheDescriptionImages(gameId: string, description: string
 
   // Update description with cached URLs
   if (cachedUrlHashes.size > 0) {
-    const newDescription = replaceDescriptionMediaUrls($, gameId, cachedUrlHashes)
+    const newDescription = replaceDescriptionMediaUrls($, attachmentPrefix, cachedUrlHashes)
     await GameDBManager.setGameValue(gameId, 'metadata.description', newDescription)
   }
 }

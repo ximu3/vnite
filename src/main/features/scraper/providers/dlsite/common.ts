@@ -2,7 +2,6 @@ import { GameList, GameMetadata, ScraperIdentifier } from '@appTypes/utils'
 import * as cheerio from 'cheerio'
 import i18next from 'i18next'
 import { ConfigDBManager } from '~/core/database'
-import { getLanguage } from '~/features/system/services/i18n'
 import { isHttpError, logScraperError } from '../../errors'
 import { createScraperFetch, readScraperJson } from '../../request'
 import { extractReleaseDateWithLibrary } from './i18n'
@@ -12,12 +11,21 @@ const fetch = createScraperFetch()
 
 const ID_REGEX = /(rj|re|vj)\d{4,}/gi
 
-function buildDlsiteWorkUrl(dlsiteId: string, language?: string): string {
-  const localePart = language ? `?locale=${language}` : ''
+function buildDlsiteWorkUrl(dlsiteId: string, locale?: string): string {
+  const localePart = locale ? `?locale=${locale}` : ''
   if (dlsiteId.startsWith('VJ')) {
     return `https://www.dlsite.com/pro/work/=/product_id/${dlsiteId}.html${localePart}`
   }
   return `https://www.dlsite.com/maniax/work/=/product_id/${dlsiteId}.html${localePart}`
+}
+
+function extractBackgroundUrls($: cheerio.CheerioAPI): string[] {
+  const backgrounds = $('.key-visual-slider picture img[src]')
+    .map((_, element) => $(element).attr('src'))
+    .get()
+    .map((url) => (url.startsWith('//') ? `https:${url}` : url))
+
+  return [...new Set(backgrounds)]
 }
 
 export async function searchDlsiteGames(gameName: string, gamePath?: string): Promise<GameList> {
@@ -48,9 +56,9 @@ export async function searchDlsiteGames(gameName: string, gamePath?: string): Pr
     }
   }
   const encodedQuery = encodeURIComponent(gameName.trim()).replace(/%20/g, '+')
-  const language = await getLanguage()
+  const locale = i18next.t('scraper:dlsite.locale')
   // Restrict keyword searches to games to avoid matching other work categories.
-  const url = `https://www.dlsite.com/maniax/fsr/=/language/jp/work_type_category%5B0%5D/game/keyword/${encodedQuery}/?locale=${language}`
+  const url = `https://www.dlsite.com/maniax/fsr/=/language/jp/work_type_category%5B0%5D/game/keyword/${encodedQuery}/?locale=${locale}`
 
   const response = await fetch(url, {
     headers: {
@@ -58,7 +66,7 @@ export async function searchDlsiteGames(gameName: string, gamePath?: string): Pr
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
       Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
       'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
-      Cookie: `adultchecked=1; locale=${language}`
+      Cookie: `adultchecked=1; locale=${locale}`
     }
   })
 
@@ -125,8 +133,8 @@ export async function getDlsiteScore(identifier: ScraperIdentifier): Promise<num
 
 export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata | null> {
   // Try to access the work page
-  const language = await getLanguage()
-  const url = buildDlsiteWorkUrl(dlsiteId, language)
+  const locale = i18next.t('scraper:dlsite.locale')
+  const url = buildDlsiteWorkUrl(dlsiteId, locale)
 
   let response: Response
   try {
@@ -136,7 +144,7 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata 
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
-        Cookie: `adultchecked=1; locale=${language}`
+        Cookie: `adultchecked=1; locale=${locale}`
       }
     })
   } catch (error) {
@@ -151,12 +159,17 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata 
   const name = $('#work_name').text().trim()
   const originalName = name
 
-  const workTypeTerm = i18next.t('scraper:dlsite.workType', { lng: language })
-  const releaseDateTerm = i18next.t('scraper:dlsite.releaseDate', { lng: language })
-  const seriesTerm = i18next.t('scraper:dlsite.series', { lng: language })
+  const workTypeTerm = i18next.t('scraper:dlsite.workType')
+  const releaseDateTerm = i18next.t('scraper:dlsite.releaseDate')
+  const seriesTerm = i18next.t('scraper:dlsite.series')
+  const infoKeys = $('dt.c-productInfo__key')
+  const findInfoValues = (term: string): ReturnType<typeof infoKeys.next> =>
+    infoKeys.filter((_, element) => $(element).text().trim().includes(term)).next('dd')
 
   // Extract description, keep HTML but modify links to add target="_blank"
-  const descriptionElement = $('[itemprop="description"]')
+  const descriptionElement = $(
+    '.c-productInfo:not(.c-productSystemRequirements) > .c-productInfo__inner'
+  ).first()
 
   // Find all links in the description element and add target="_blank" attribute
   descriptionElement.find('a').attr('target', '_blank')
@@ -233,20 +246,18 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata 
   description = description.replace(/(\s)\s+/g, '$1') // Replace consecutive whitespace with a single space
 
   // Handle remaining URLs starting with // in the description (for possible inline styles or other attributes)
-  description = description.replace(/(src|href)="\/\//g, '$1="https://')
+  description = description.replace(/(src|srcset|href)="\/\//g, '$1="https://')
 
   // Extract release date
-  let releaseDate = ''
-  $('th').each((_, element) => {
-    const thText = $(element).text().trim()
-    if (thText.includes(releaseDateTerm)) {
-      const releaseDateText = $(element).next('td').text().trim()
-      releaseDate = extractReleaseDateWithLibrary(releaseDateText, language)
-    }
-  })
+  const releaseDateValue = findInfoValues(releaseDateTerm).first()
+  const releaseDate = extractReleaseDateWithLibrary(
+    releaseDateValue.text().trim(),
+    releaseDateValue.find('a').attr('href')
+  )
 
   // Extract developer (producer)
-  const developer = $('.maker_name a').text().trim()
+  const makerLink = $('a.c-productInfo__makerName')
+  const developer = makerLink.text().trim()
   const developers = developer ? [developer] : []
   const publishers = developers.length > 0 ? [...developers] : undefined
 
@@ -255,7 +266,7 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata 
   const genres: string[] = []
 
   // Extract main genre tags
-  $('.main_genre a').each((_, element) => {
+  $('dd.c-productInfo__value a[href*="/genre/"]').each((_, element) => {
     const tag = $(element).text().trim()
     if (tag && !tags.includes(tag)) {
       tags.push(tag)
@@ -263,23 +274,17 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata 
   })
 
   // Extract work type
-  $('th').each((_, element) => {
-    const thText = $(element).text().trim()
-    if (thText.includes(workTypeTerm)) {
-      $(element)
-        .next('td')
-        .find('a')
-        .each((_, genreElement) => {
-          const genre = $(genreElement).text().trim()
-          if (genre && !genres.includes(genre)) {
-            genres.push(genre)
-            if (!tags.includes(genre)) {
-              tags.push(genre)
-            }
-          }
-        })
-    }
-  })
+  findInfoValues(workTypeTerm)
+    .find('a')
+    .each((_, genreElement) => {
+      const genre = $(genreElement).text().trim()
+      if (genre && !genres.includes(genre)) {
+        genres.push(genre)
+        if (!tags.includes(genre)) {
+          tags.push(genre)
+        }
+      }
+    })
 
   // Extract related sites
   const relatedSites: { label: string; url: string }[] = []
@@ -290,27 +295,25 @@ export async function getDlsiteMetadata(dlsiteId: string): Promise<GameMetadata 
   })
 
   // Add producer site
-  const makerUrl = $('.maker_name a').attr('href')
+  // Electron's net.fetch does not reliably populate response.url.
+  const makerUrl = makerLink.attr('href')
   if (makerUrl && developer) {
     relatedSites.push({
-      label: `${developer} (${i18next.t('scraper:dlsite.maker', { lng: language })})`,
-      url: makerUrl.startsWith('//') ? `https:${makerUrl}` : makerUrl
+      label: `${developer} (${i18next.t('scraper:dlsite.maker')})`,
+      url: new URL(makerUrl, url).href
     })
   }
 
   // Add series link (if exists)
-  $('th').each((_, element) => {
-    const thText = $(element).text().trim()
-    if (thText.includes(seriesTerm)) {
-      const seriesElement = $(element).next('td').find('a').first()
-      const seriesUrl = seriesElement.attr('href')
-      const seriesName = seriesElement.text().trim()
-      if (seriesUrl && seriesName) {
-        relatedSites.push({
-          label: `${seriesName} (${i18next.t('scraper:dlsite.series', { lng: language })})`,
-          url: seriesUrl?.startsWith('//') ? `https:${seriesUrl}` : seriesUrl
-        })
-      }
+  findInfoValues(seriesTerm).each((_, element) => {
+    const seriesElement = $(element).find('a').first()
+    const seriesUrl = seriesElement.attr('href')
+    const seriesName = seriesElement.text().trim()
+    if (seriesUrl && seriesName) {
+      relatedSites.push({
+        label: `${seriesName} (${i18next.t('scraper:dlsite.series')})`,
+        url: new URL(seriesUrl, url).href
+      })
     }
   })
 
@@ -340,7 +343,7 @@ export async function getDlsiteMetadataByName(gameName: string): Promise<GameMet
 export async function getGameBackgrounds(dlsiteId: string): Promise<string[]> {
   try {
     const url = buildDlsiteWorkUrl(dlsiteId)
-    const language = await getLanguage()
+    const locale = i18next.t('scraper:dlsite.locale')
 
     const response = await fetch(url, {
       headers: {
@@ -348,31 +351,13 @@ export async function getGameBackgrounds(dlsiteId: string): Promise<string[]> {
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
-        Cookie: `adultchecked=1; locale=${language}`
+        Cookie: `adultchecked=1; locale=${locale}`
       }
     })
 
     const data = await response.text()
     const $ = cheerio.load(data)
-    const screenshots: string[] = []
-
-    $('[data-src]').each((_, element) => {
-      let imgUrl = $(element).attr('data-src') || ''
-
-      if (imgUrl && imgUrl.startsWith('//')) {
-        imgUrl = `https:${imgUrl}`
-      }
-
-      if (
-        imgUrl &&
-        !screenshots.includes(imgUrl) &&
-        (imgUrl.includes('_img_main') || imgUrl.includes('_img_smp'))
-      ) {
-        screenshots.push(imgUrl)
-      }
-    })
-
-    return screenshots
+    return extractBackgroundUrls($)
   } catch (error) {
     if (isHttpError(error, 404)) return []
     throw error
@@ -400,7 +385,7 @@ export async function getGameBackgroundsByName(gameName: string): Promise<string
 export async function getGameCover(dlsiteId: string): Promise<string> {
   try {
     const url = buildDlsiteWorkUrl(dlsiteId)
-    const language = await getLanguage()
+    const locale = i18next.t('scraper:dlsite.locale')
 
     const response = await fetch(url, {
       headers: {
@@ -408,7 +393,7 @@ export async function getGameCover(dlsiteId: string): Promise<string> {
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36',
         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'Accept-Language': 'zh-CN,zh;q=0.9,ja;q=0.8,en;q=0.7',
-        Cookie: `adultchecked=1; locale=${language}`
+        Cookie: `adultchecked=1; locale=${locale}`
       }
     })
 
@@ -416,15 +401,7 @@ export async function getGameCover(dlsiteId: string): Promise<string> {
     const $ = cheerio.load(data)
 
     // First try to find an image containing img_main
-    let mainImg = ''
-
-    // Search for all image elements
-    $('img[srcset], source[srcset]').each((_, element) => {
-      const srcset = $(element).attr('srcset') || ''
-      if (srcset.includes('img_main') && !mainImg) {
-        mainImg = srcset
-      }
-    })
+    const mainImg = $('.c-keyVisual picture source[srcset*="_img_main"]').first().attr('srcset')
 
     // If an image containing img_main was found
     if (mainImg) {
@@ -436,14 +413,10 @@ export async function getGameCover(dlsiteId: string): Promise<string> {
     }
 
     // If no image containing img_main was found, get the list of background images
-    const screenshots = await getGameBackgrounds(dlsiteId)
+    const screenshots = extractBackgroundUrls($)
 
     // Use the first background image as cover
-    if (screenshots.length > 0) {
-      return screenshots[0]
-    }
-
-    return ''
+    return screenshots[0] ?? ''
   } catch (error) {
     if (isHttpError(error, 404)) return ''
     throw error

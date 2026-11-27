@@ -6,6 +6,7 @@
     "unknown": "Unknown error."
   },
   "dlsite": {
+    "locale": "en_US",
     "workType": "Product format",
     "releaseDate": "Release date",
     "series": "Series name",

@@ -1,36 +1,16 @@
-import { parse, format } from 'date-fns'
+import { format, isValid, parse } from 'date-fns'
 
-export function extractReleaseDateWithLibrary(dateText: string, language: string): string {
-  try {
-    let parsedDate: string | Date | null = null
+export function extractReleaseDateWithLibrary(dateText: string, dateHref?: string): string {
+  // Prefer the calendar link, then match the Japanese, Chinese, or numeric English display date.
+  const numericDate =
+    dateHref?.match(/\/year\/(\d{4})\/mon\/(\d{1,2})\/day\/(\d{1,2})\b/) ??
+    dateText.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/) ??
+    dateText.match(/\b(\d{4})\/(\d{1,2})\/(\d{1,2})\b/)
 
-    if (language === 'en') {
-      // First try to match the "Release date MMM/DD/YYYYY" format
-      const dateMatch = dateText.match(/([A-Za-z]{3})\/(\d{1,2})\/(\d{4})/i)
+  if (!numericDate) return ''
+  const [, year, month, day] = numericDate
+  const parsedDate = parse(`${year}-${month}-${day}`, 'yyyy-M-d', new Date())
 
-      if (dateMatch) {
-        const [_, monthStr, dayStr, yearStr] = dateMatch
-        // Construct a date string suitable for parsing, e.g. "Oct 03 2020"
-        const formattedDateStr = `${monthStr} ${dayStr} ${yearStr}`
-        parsedDate = parse(formattedDateStr, 'MMM dd yyyy', new Date())
-      }
-    } else if (language === 'ja' || language === 'zh-CN') {
-      // Match Japanese/Chinese format
-      const dateMatch = dateText.match(/(\d{4})年(\d{2})月(\d{2})日/)
-      if (dateMatch) {
-        const [_, year, month, day] = dateMatch
-        parsedDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-      }
-    }
-
-    // If parsed successfully, the ISO format date is returned
-    if (parsedDate && !isNaN(parsedDate.getTime())) {
-      return format(parsedDate, 'yyyy-MM-dd')
-    }
-
-    return ''
-  } catch (error) {
-    console.error('Date parsing error:', error)
-    return ''
-  }
+  // If parsed successfully, the ISO format date is returned
+  return isValid(parsedDate) ? format(parsedDate, 'yyyy-MM-dd') : ''
 }
