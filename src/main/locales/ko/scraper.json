@@ -1,8 +1,9 @@
 {
   "dlsite": {
-    "workType": "제품 형식",
-    "releaseDate": "발매 일자",
-    "series": "시리즈 이름",
+    "locale": "ko_KR",
+    "workType": "작품 형식",
+    "releaseDate": "판매일",
+    "series": "시리즈명",
     "maker": "브랜드"
   },
   "steam": {

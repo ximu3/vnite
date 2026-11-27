@@ -6,6 +6,7 @@
     "unknown": "不明なエラー。"
   },
   "dlsite": {
+    "locale": "ja_JP",
     "workType": "作品形式",
     "releaseDate": "販売日",
     "series": "シリーズ名",
